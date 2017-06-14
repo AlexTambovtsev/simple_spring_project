@@ -24,7 +24,6 @@ public class HelloWorldController {
         fillArticles();
     }
     SiteParam[] params;
-    SiteParam[] newParams;
     public Integer getRealArticleNumber(Integer page, String adress) {
         if (page==null || page<1) {
             page=1;
@@ -176,7 +175,7 @@ public class HelloWorldController {
     public String postViewOrDelArticle(String text, String title, Integer articleNumber, String delete) {
         articleNumber=getRealArticleNumber(articleNumber, "page");
         if (delete!=null) {
-            newParams=new SiteParam[params.length-1];
+            SiteParam[] newParams=new SiteParam[params.length-1];
             for (int i=0; i<articleNumber-1; i++) {
                 newParams[i]=params[i];
             }
@@ -209,7 +208,7 @@ public class HelloWorldController {
     @PostMapping("/newArticle")
     @ResponseBody
     public String postNewArticle(String title, String text) {
-        newParams = new SiteParam[params.length+1];
+        SiteParam[] newParams = new SiteParam[params.length+1];
         for (int i=0; i<params.length; i++) {
             newParams[i]=params[i];
         }
