@@ -20,10 +20,12 @@ import java.util.List;
 //адрес которых начиченается с /site
 @RequestMapping("/site")
 public class HelloWorldController {
+    {
+        fillArticles();
+    }
     SiteParam[] params;
     SiteParam[] newParams;
     public Integer getRealArticleNumber(Integer page, String adress) {
-        fillArticles();
         if (page==null || page<1) {
             page=1;
         }
@@ -176,11 +178,9 @@ public class HelloWorldController {
         if (delete!=null) {
             newParams=new SiteParam[params.length-1];
             for (int i=0; i<articleNumber-1; i++) {
-              //  newParams[i]=new SiteParam();
                 newParams[i]=params[i];
             }
             for (int i=articleNumber-1; i<newParams.length; i++) {
-               // newParams[i]=new SiteParam();
                 newParams[i]=params[i+1];
             }
             params=newParams;
@@ -194,7 +194,6 @@ public class HelloWorldController {
     @GetMapping("/newArticle")
     @ResponseBody
     public String getNewArticle() {
-        fillArticles();
         SiteParam newArticle = new SiteParam();
         return "<body><br>" +
                 "<form method='post'>" +
@@ -212,7 +211,6 @@ public class HelloWorldController {
     public String postNewArticle(String title, String text) {
         newParams = new SiteParam[params.length+1];
         for (int i=0; i<params.length; i++) {
-           // newParams[i]=new SiteParam();
             newParams[i]=params[i];
         }
         newParams[newParams.length-1]=new SiteParam();
