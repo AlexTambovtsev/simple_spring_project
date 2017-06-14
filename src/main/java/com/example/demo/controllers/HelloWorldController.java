@@ -23,6 +23,16 @@ public class HelloWorldController {
     {
         fillArticles();
     }
+
+    public void addArticle(SiteParam article) {
+        SiteParam[] newParams = new SiteParam[params.length+1];
+        for (int i=0; i<params.length; i++) {
+            newParams[i]=params[i];
+        }
+        newParams[newParams.length-1]=article;
+        params=newParams;
+    }
+
     SiteParam[] params;
     public Integer getRealArticleNumber(Integer page, String adress) {
         if (page==null || page<1) {
@@ -208,14 +218,10 @@ public class HelloWorldController {
     @PostMapping("/newArticle")
     @ResponseBody
     public String postNewArticle(String title, String text) {
-        SiteParam[] newParams = new SiteParam[params.length+1];
-        for (int i=0; i<params.length; i++) {
-            newParams[i]=params[i];
-        }
-        newParams[newParams.length-1]=new SiteParam();
-        newParams[newParams.length-1].title=title;
-        newParams[newParams.length-1].text=text;
-        params=newParams;
+        SiteParam param = new SiteParam();
+        param.title=title;
+        param.text=text;
+        addArticle(param);
         return "Done";
     }
 }
