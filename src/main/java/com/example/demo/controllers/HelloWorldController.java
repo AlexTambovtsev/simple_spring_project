@@ -33,12 +33,23 @@ public class HelloWorldController {
         params=newParams;
     }
 
+    public void removeArticle(int index) {
+        SiteParam[] newParams=new SiteParam[params.length-1];
+        for (int i=0; i<index-1; i++) {
+            newParams[i]=params[i];
+        }
+        for (int i=index-1; i<newParams.length; i++) {
+            newParams[i]=params[i+1];
+        }
+        params=newParams;
+    }
+
     SiteParam[] params;
     public Integer getRealArticleNumber(Integer page, String adress) {
         if (page==null || page<1) {
             page=1;
         }
-        if (adress == "page" && page>params.length) {
+        if ((adress == "page" || adress=="view") && page>params.length) {
             page=params.length;
         }
         if (adress == "title" && page>params.length/3) {
@@ -67,26 +78,33 @@ public class HelloWorldController {
         String minus = "prev ";
         String plus = " next<br>";
         String numPage = "";
+        String isItPageOrArticleNumber;
         int numberOfLinks=9;
         int prev = numberOfLinks/2;
         int next = numberOfLinks-prev-1;
         int maxPagesOfTitels = params.length/3+1;
+        if (adress=="page" || adress=="title") {
+            isItPageOrArticleNumber="?page=";
+        }
+        else {
+            isItPageOrArticleNumber="?articleNumber=";
+        }
         if (params.length%3==0) {
             maxPagesOfTitels--;
         }
         if (page > 1) {
-            minus = "<a href=http://localhost:8080/site/" + adress + "?page=" + (page-1) + ">" + "prev" + "</a> ";
+            minus = "<a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + (page-1) + ">" + "prev" + "</a> ";
         }
-        if (adress == "page" && page < params.length) {
-            plus = " <a href=http://localhost:8080/site/" + adress + "?page=" + (page+1) + ">" + "next" + "</a>" + "<br>";
+        if ((adress=="page" || adress=="view") && page < params.length) {
+            plus = " <a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + (page+1) + ">" + "next" + "</a>" + "<br>";
         }
-        if (adress == "title" && page < maxPagesOfTitels) {
-            plus = " <a href=http://localhost:8080/site/" + adress + "?page=" + (page+1) + ">" + "next" + "</a>" + "<br>";
+        if (adress=="title" && page < maxPagesOfTitels) {
+            plus = " <a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + (page+1) + ">" + "next" + "</a>" + "<br>";
         }
-        if (adress == "page" && params.length <= numberOfLinks) {
+        if ((adress=="page" || adress=="view") && params.length <= numberOfLinks) {
             for (int i = 1; i <= params.length; i++) {
                 if (i != page) {
-                    numPage += "<a href=http://localhost:8080/site/" + adress + "?page=" + i + ">" + i + "</a>" + " ";
+                    numPage += "<a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + i + ">" + i + "</a>" + " ";
                 } else {
                     numPage += "[" + String.valueOf(i) + "]" + " ";
                 }
@@ -95,7 +113,7 @@ public class HelloWorldController {
         else if (adress == "title" && params.length <= numberOfLinks*3) {
             for  (int i=1; i<=maxPagesOfTitels; i++) {
                 if (i != page) {
-                    numPage += "<a href=http://localhost:8080/site/" + adress + "?page=" + i + ">" + i + "</a>" + " ";
+                    numPage += "<a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + i + ">" + i + "</a>" + " ";
                 }
                 else {
                     numPage += "[" + String.valueOf(i) + "]" + " ";
@@ -107,14 +125,14 @@ public class HelloWorldController {
                 prev = page-1;
                 next = numberOfLinks-page;
             }
-            if (adress == "page" && page >= (params.length-next)) {
+            if ((adress=="page" || adress=="view") && page >= (params.length-next)) {
                 prev = page - params.length + numberOfLinks-1;
                 next = params.length - page;
             }
-            if (adress == "page") {
+            if ((adress=="page" || adress=="view")) {
                 for (int i = page-prev; i <= page+next; i++) {
                     if (i != page) {
-                        numPage += "<a href=http://localhost:8080/site/" + adress + "?page=" + i + ">" + i + "</a>" + " ";
+                        numPage += "<a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + i + ">" + i + "</a>" + " ";
                     }
                     else {
                         numPage += "[" + String.valueOf(i) + "]" + " ";
@@ -128,7 +146,7 @@ public class HelloWorldController {
             if (adress == "title") {
                 for (int i = page-prev; i <= page+next; i++) {
                     if (i != page) {
-                        numPage += "<a href=http://localhost:8080/site/" + adress + "?page=" + i + ">" + i + "</a>" + " ";
+                        numPage += "<a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + i + ">" + i + "</a>" + " ";
                     }
                     else {
                         numPage += "[" + String.valueOf(i) + "]" + " ";
@@ -167,8 +185,9 @@ public class HelloWorldController {
     @GetMapping("/view")
     @ResponseBody
     public String getView(Integer articleNumber) {
-        articleNumber=getRealArticleNumber(articleNumber, "page");
-        return "<body><br>" +
+        articleNumber=getRealArticleNumber(articleNumber, "view");
+        String numPage = "<body><br>" + getLinksToArticles(articleNumber, "view");
+        return numPage + "<br>" +
                 "<form method='post'>" +
                 "<h3><b>" +
                 "<input type='text' name='title' placeholder =" + params[articleNumber-1].title + ">" + "</input>" + "</h3></b><br>" +
@@ -185,14 +204,7 @@ public class HelloWorldController {
     public String postViewOrDelArticle(String text, String title, Integer articleNumber, String delete) {
         articleNumber=getRealArticleNumber(articleNumber, "page");
         if (delete!=null) {
-            SiteParam[] newParams=new SiteParam[params.length-1];
-            for (int i=0; i<articleNumber-1; i++) {
-                newParams[i]=params[i];
-            }
-            for (int i=articleNumber-1; i<newParams.length; i++) {
-                newParams[i]=params[i+1];
-            }
-            params=newParams;
+            removeArticle(articleNumber);
             return getView(articleNumber);
         }
         params[articleNumber-1].title=title;
