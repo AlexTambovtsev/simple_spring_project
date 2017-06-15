@@ -24,6 +24,13 @@ public class HelloWorldController {
         fillArticles();
     }
 
+    public SiteParam getArticle(int index) {
+        SiteParam article=new SiteParam();
+        article.title=params[index-1].title;
+        article.text=params[index-1].text;
+        return article;
+    }
+
     public void addArticle(SiteParam article) {
         SiteParam[] newParams = new SiteParam[params.length+1];
         for (int i=0; i<params.length; i++) {
