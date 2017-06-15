@@ -181,11 +181,12 @@ public class HelloWorldController {
     @ResponseBody
     public String getPage(Integer page) {
         page=getRealArticleNumber(page, "page");
+        SiteParam article=getArticle(page);
         String numPage = "<body><br>" + getLinksToArticles(page, "page");
         String viewPage="<a href=http://localhost:8080/site/view?articleNumber=" + page +">" + "view_" + page + "</a>"+" ";
         return numPage + "<br>" +
-                "<h3><b>" + params[page-1].title + "</h3></b><br>" +
-                params[page-1].text + "<br>" +
+                "<h3><b>" + article.title + "</h3></b><br>" +
+                article.text + "<br>" +
                 viewPage + "<br></body>";
     }
 
