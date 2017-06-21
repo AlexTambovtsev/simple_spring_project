@@ -1,29 +1,15 @@
 package com.example.demo.controllers;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-
-import java.util.Arrays;
-import java.util.List;
-
 /**
- * Created by ISazonov on 28.04.2017.
+ * Created by Tambovtsev on 21.06.2017.
  */
-//Аннотация, которая помечает класс, как контроллер
-@Controller
-//Аннотация, которая говорит, что все методы класса будут генерировать странички.
-//адрес которых начиченается с /site
-@RequestMapping("/site")
-public class HelloWorldController {
+public class ArticleRepository {
+    private SiteParam[] params;
     {
         fillArticles();
     }
+
+    public int numberOfArticles=params.length;
 
     public String getTitleOfArticle(int articleNumber) {
 
@@ -59,7 +45,6 @@ public class HelloWorldController {
         params=newParams;
     }
 
-    SiteParam[] params;
     public Integer getRealArticleNumber(Integer page, String adress) {
         if (page==null || page<1) {
             page=1;
@@ -171,84 +156,4 @@ public class HelloWorldController {
         }
         return minus + numPage + plus;
     }
-
-    @GetMapping("/title")
-    @ResponseBody
-    public String getTitle(Integer page) {
-        page=getRealArticleNumber(page, "title");
-        SiteParam article=getArticle(page);
-        String titles="<body><br>" + getLinksToArticles(page, "title");
-        int i=page*3-2;
-        while (i<=params.length && i<=page*3) {
-            titles += "<a href=http://localhost:8080/site/view?articleNumber=" + i + ">" + params[i-1].title + "</a>" + "<br>";
-            i++;
-        }
-            return titles + "<br></body>";
-    }
-
-    @GetMapping("/page")
-    @ResponseBody
-    public String getPage(Integer page) {
-        page=getRealArticleNumber(page, "page");
-        SiteParam article=getArticle(page);
-        String numPage = "<body><br>" + getLinksToArticles(page, "page");
-        String viewPage="<a href=http://localhost:8080/site/view?articleNumber=" + page +">" + "view_" + page + "</a>"+" ";
-        return numPage + "<br>" +
-                "<h3><b>" + article.title + "</h3></b><br>" +
-                article.text + "<br>" +
-                viewPage + "<br></body>";
-    }
-
-    @GetMapping("/view")
-    @ResponseBody
-    public String getView(Integer articleNumber) {
-        articleNumber=getRealArticleNumber(articleNumber, "view");
-        SiteParam article=getArticle(articleNumber);
-        String numPage = "<body><br>" + getLinksToArticles(articleNumber, "view");
-        return numPage + "<br>" +
-                "<form method='post'>" +
-                "<h3><b>" +
-                "<input type='text' name='title' placeholder =" + article.title + ">" + "</input>" + "</h3></b><br>" +
-                "<br>" +
-                "<textarea name='text'>" + article.text + "</textarea>" + "<br>" +
-                "<input type='submit'/>" +
-                "<input type='submit' name='delete' value='delete'/>" + "<br>" +
-                "</form>" +
-                "<br></body>";
-    }
-
-    @PostMapping("/view")
-    @ResponseBody
-    public String postViewOrDelArticle(SiteParam param, Integer articleNumber, String delete) {
-        articleNumber=getRealArticleNumber(articleNumber, "page");
-        if (delete!=null) {
-            removeArticle(articleNumber);
-            return getView(articleNumber);
-        }
-        editArticle(param, articleNumber-1);
-        return getView(articleNumber);
-    }
-
-    @GetMapping("/newArticle")
-    @ResponseBody
-    public String getNewArticle() {
-        SiteParam newArticle = new SiteParam();
-        return "<body><br>" +
-                "<form method='post'>" +
-                "<h3><b>" +
-                "<input type='text' name='title' placeholder =" + newArticle.title + ">" + "</input>" + "</h3></b><br>" +
-                "<br>" +
-                "<textarea name='text'>" + newArticle.text + "</textarea>" +
-                "<input type='submit'/>" + "<br>" +
-                "</form>" +
-                "<br></body>";
-    }
-
-    @PostMapping("/newArticle")
-    @ResponseBody
-    public String postNewArticle(SiteParam param) {
-        addArticle(param);
-        return "Done";
-    }
 }
-
