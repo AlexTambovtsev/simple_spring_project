@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.Arrays;
 import java.util.List;
@@ -237,10 +238,7 @@ public class HelloWorldController {
 
     @PostMapping("/newArticle")
     @ResponseBody
-    public String postNewArticle(String title, String text) {
-        SiteParam param = new SiteParam();
-        param.title=title;
-        param.text=text;
+    public String postNewArticle(SiteParam param) {
         addArticle(param);
         return "Done";
     }
