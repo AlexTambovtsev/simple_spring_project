@@ -9,7 +9,7 @@ public class ArticleRepository {
         fillArticles();
     }
 
-    public int numberOfArticles=params.length;
+    Integer numberOfArticles=params.length;
 
     public String getTitleOfArticle(int articleNumber) {
         return params[articleNumber-1].title;
@@ -20,9 +20,7 @@ public class ArticleRepository {
     }
 
     public SiteParam getArticle(int articleNumber) {
-        SiteParam article;
-        article=params[articleNumber-1];
-        return article;
+        return params[articleNumber-1];
     }
 
     public void addArticle(SiteParam article) {

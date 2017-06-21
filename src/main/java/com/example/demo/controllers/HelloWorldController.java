@@ -34,9 +34,7 @@ public class HelloWorldController {
     }
 
     public SiteParam getArticle(int articleNumber) {
-        SiteParam article;
-        article=params[articleNumber-1];
-        return article;
+        return params[articleNumber-1];
     }
 
     public void addArticle(SiteParam article) {
