@@ -26,7 +26,7 @@ public class HelloWorldController {
     }
 
     public String getTitleOfArticle(int articleNumber) {
-
+        return params[articleNumber-1].title;
     }
 
     public void editArticle(SiteParam param, Integer articleNumber) {
@@ -176,11 +176,10 @@ public class HelloWorldController {
     @ResponseBody
     public String getTitle(Integer page) {
         page=getRealArticleNumber(page, "title");
-        SiteParam article=getArticle(page);
         String titles="<body><br>" + getLinksToArticles(page, "title");
         int i=page*3-2;
         while (i<=params.length && i<=page*3) {
-            titles += "<a href=http://localhost:8080/site/view?articleNumber=" + i + ">" + params[i-1].title + "</a>" + "<br>";
+            titles += "<a href=http://localhost:8080/site/view?articleNumber=" + i + ">" + getTitleOfArticle(i) + "</a>" + "<br>";
             i++;
         }
             return titles + "<br></body>";

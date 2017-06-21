@@ -12,7 +12,7 @@ public class ArticleRepository {
     public int numberOfArticles=params.length;
 
     public String getTitleOfArticle(int articleNumber) {
-
+        return params[articleNumber-1].title;
     }
 
     public void editArticle(SiteParam param, Integer articleNumber) {
