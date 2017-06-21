@@ -24,7 +24,7 @@ public class HelloWorldController {
     {
         fillArticles();
     }
-    
+
 
     public void editArticle(SiteParam param, Integer articleNumber) {
         params[articleNumber]=param;
@@ -199,13 +199,14 @@ public class HelloWorldController {
     @ResponseBody
     public String getView(Integer articleNumber) {
         articleNumber=getRealArticleNumber(articleNumber, "view");
+        SiteParam article=getArticle(articleNumber);
         String numPage = "<body><br>" + getLinksToArticles(articleNumber, "view");
         return numPage + "<br>" +
                 "<form method='post'>" +
                 "<h3><b>" +
-                "<input type='text' name='title' placeholder =" + params[articleNumber-1].title + ">" + "</input>" + "</h3></b><br>" +
+                "<input type='text' name='title' placeholder =" + article.title + ">" + "</input>" + "</h3></b><br>" +
                 "<br>" +
-                "<textarea name='text'>" + params[articleNumber-1].text + "</textarea>" + "<br>" +
+                "<textarea name='text'>" + article.text + "</textarea>" + "<br>" +
                 "<input type='submit'/>" +
                 "<input type='submit' name='delete' value='delete'/>" + "<br>" +
                 "</form>" +
