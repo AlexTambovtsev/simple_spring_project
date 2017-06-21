@@ -25,6 +25,10 @@ public class HelloWorldController {
         fillArticles();
     }
 
+    public void editArticle(SiteParam param, Integer articleNumber) {
+        params[articleNumber]=param;
+    }
+
     public SiteParam getArticle(int index) {
         SiteParam article=new SiteParam();
         article.title=params[index-1].title;
@@ -210,14 +214,13 @@ public class HelloWorldController {
 
     @PostMapping("/view")
     @ResponseBody
-    public String postViewOrDelArticle(String text, String title, Integer articleNumber, String delete) {
+    public String postViewOrDelArticle(SiteParam param, Integer articleNumber, String delete) {
         articleNumber=getRealArticleNumber(articleNumber, "page");
         if (delete!=null) {
             removeArticle(articleNumber);
             return getView(articleNumber);
         }
-        params[articleNumber-1].title=title;
-        params[articleNumber-1].text=text;
+        editArticle(param, articleNumber-1);
         return getView(articleNumber);
     }
 
