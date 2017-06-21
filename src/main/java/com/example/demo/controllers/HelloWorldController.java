@@ -24,15 +24,15 @@ public class HelloWorldController {
     {
         fillArticles();
     }
+    
 
     public void editArticle(SiteParam param, Integer articleNumber) {
         params[articleNumber]=param;
     }
 
-    public SiteParam getArticle(int index) {
-        SiteParam article=new SiteParam();
-        article.title=params[index-1].title;
-        article.text=params[index-1].text;
+    public SiteParam getArticle(int articleNumber) {
+        SiteParam article;
+        article=params[articleNumber-1];
         return article;
     }
 
