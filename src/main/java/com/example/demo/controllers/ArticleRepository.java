@@ -4,7 +4,7 @@ package com.example.demo.controllers;
  * Created by Tambovtsev on 21.06.2017.
  */
 public class ArticleRepository {
-    private SiteParam[] params;
+    private Article[] params;
     {
         fillArticles();
     }
@@ -15,16 +15,16 @@ public class ArticleRepository {
         return params[articleNumber-1].title;
     }
 
-    public void editArticle(SiteParam param, Integer articleNumber) {
+    public void editArticle(Article param, Integer articleNumber) {
         params[articleNumber]=param;
     }
 
-    public SiteParam getArticle(int articleNumber) {
+    public Article getArticle(int articleNumber) {
         return params[articleNumber-1];
     }
 
-    public void addArticle(SiteParam article) {
-        SiteParam[] newParams = new SiteParam[params.length+1];
+    public void addArticle(Article article) {
+        Article[] newParams = new Article[params.length+1];
         for (int i=0; i<params.length; i++) {
             newParams[i]=params[i];
         }
@@ -33,7 +33,7 @@ public class ArticleRepository {
     }
 
     public void removeArticle(int index) {
-        SiteParam[] newParams=new SiteParam[params.length-1];
+        Article[] newParams=new Article[params.length-1];
         for (int i=0; i<index-1; i++) {
             newParams[i]=params[i];
         }
@@ -63,9 +63,9 @@ public class ArticleRepository {
 
     public void fillArticles() {
         if (params==null) {
-            params = new SiteParam[42];
+            params = new Article[42];
             for (int i = 0; i < params.length; i++) {
-                params[i] = new SiteParam();
+                params[i] = new Article();
                 params[i].title = "title_" + (i + 1);
                 params[i].text = "text_" + (i + 1);
             }

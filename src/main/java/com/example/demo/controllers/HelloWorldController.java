@@ -4,13 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by ISazonov on 28.04.2017.
@@ -124,7 +118,7 @@ public class HelloWorldController {
     @ResponseBody
     public String getPage(Integer page) {
         page=articleRepository.getRealArticleNumber(page, "page");
-        SiteParam article=articleRepository.getArticle(page);
+        Article article=articleRepository.getArticle(page);
         String numPage = "<body><br>" + getLinksToArticles(page, "page");
         String viewPage="<a href=http://localhost:8080/site/view?articleNumber=" + page +">" + "view_" + page + "</a>"+" ";
         return numPage + "<br>" +
@@ -137,7 +131,7 @@ public class HelloWorldController {
     @ResponseBody
     public String getView(Integer articleNumber) {
         articleNumber=articleRepository.getRealArticleNumber(articleNumber, "view");
-        SiteParam article=articleRepository.getArticle(articleNumber);
+        Article article=articleRepository.getArticle(articleNumber);
         String numPage = "<body><br>" + getLinksToArticles(articleNumber, "view");
         return numPage + "<br>" +
                 "<form method='post'>" +
@@ -153,7 +147,7 @@ public class HelloWorldController {
 
     @PostMapping("/view")
     @ResponseBody
-    public String postViewOrDelArticle(SiteParam param, Integer articleNumber, String delete) {
+    public String postViewOrDelArticle(Article param, Integer articleNumber, String delete) {
         articleNumber=articleRepository.getRealArticleNumber(articleNumber, "page");
         if (delete!=null) {
             articleRepository.removeArticle(articleNumber);
@@ -166,7 +160,7 @@ public class HelloWorldController {
     @GetMapping("/newArticle")
     @ResponseBody
     public String getNewArticle() {
-        SiteParam newArticle = new SiteParam();
+        Article newArticle = new Article();
         return "<body><br>" +
                 "<form method='post'>" +
                 "<h3><b>" +
@@ -180,7 +174,7 @@ public class HelloWorldController {
 
     @PostMapping("/newArticle")
     @ResponseBody
-    public String postNewArticle(SiteParam param) {
+    public String postNewArticle(Article param) {
         articleRepository.addArticle(param);
         return "Done";
     }
