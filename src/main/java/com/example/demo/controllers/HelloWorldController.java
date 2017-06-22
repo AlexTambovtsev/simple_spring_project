@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/site")
 public class HelloWorldController {
 
-    ArticleRepository ArrOfArticles=new ArticleRepository();
+    ArticleRepository articleRepository=new ArticleRepository();
 
     public String getLinksToArticles(Integer page, String adress) {
         String minus = "prev ";
@@ -32,27 +32,27 @@ public class HelloWorldController {
         int numberOfLinks=9;
         int prev = numberOfLinks/2;
         int next = numberOfLinks-prev-1;
-        int maxPagesOfTitels = ArrOfArticles.numberOfArticles/3+1;
+        int maxPagesOfTitels = articleRepository.numberOfArticles/3+1;
         if (adress=="page" || adress=="title") {
             isItPageOrArticleNumber="?page=";
         }
         else {
             isItPageOrArticleNumber="?articleNumber=";
         }
-        if (ArrOfArticles.numberOfArticles%3==0) {
+        if (articleRepository.numberOfArticles%3==0) {
             maxPagesOfTitels--;
         }
         if (page > 1) {
             minus = "<a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + (page-1) + ">" + "prev" + "</a> ";
         }
-        if ((adress=="page" || adress=="view") && page < ArrOfArticles.numberOfArticles) {
+        if ((adress=="page" || adress=="view") && page < articleRepository.numberOfArticles) {
             plus = " <a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + (page+1) + ">" + "next" + "</a>" + "<br>";
         }
         if (adress=="title" && page < maxPagesOfTitels) {
             plus = " <a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + (page+1) + ">" + "next" + "</a>" + "<br>";
         }
-        if ((adress=="page" || adress=="view") && ArrOfArticles.numberOfArticles <= numberOfLinks) {
-            for (int i = 1; i <= ArrOfArticles.numberOfArticles; i++) {
+        if ((adress=="page" || adress=="view") && articleRepository.numberOfArticles <= numberOfLinks) {
+            for (int i = 1; i <= articleRepository.numberOfArticles; i++) {
                 if (i != page) {
                     numPage += "<a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + i + ">" + i + "</a>" + " ";
                 } else {
@@ -60,7 +60,7 @@ public class HelloWorldController {
                 }
             }
         }
-        else if (adress == "title" && ArrOfArticles.numberOfArticles <= numberOfLinks*3) {
+        else if (adress == "title" && articleRepository.numberOfArticles <= numberOfLinks*3) {
             for  (int i=1; i<=maxPagesOfTitels; i++) {
                 if (i != page) {
                     numPage += "<a href=http://localhost:8080/site/" + adress + isItPageOrArticleNumber + i + ">" + i + "</a>" + " ";
@@ -75,9 +75,9 @@ public class HelloWorldController {
                 prev = page-1;
                 next = numberOfLinks-page;
             }
-            if ((adress=="page" || adress=="view") && page >= (ArrOfArticles.numberOfArticles-next)) {
-                prev = page - ArrOfArticles.numberOfArticles + numberOfLinks-1;
-                next = ArrOfArticles.numberOfArticles - page;
+            if ((adress=="page" || adress=="view") && page >= (articleRepository.numberOfArticles-next)) {
+                prev = page - articleRepository.numberOfArticles + numberOfLinks-1;
+                next = articleRepository.numberOfArticles - page;
             }
             if ((adress=="page" || adress=="view")) {
                 for (int i = page-prev; i <= page+next; i++) {
@@ -89,8 +89,8 @@ public class HelloWorldController {
                     }
                 }
             }
-            if (adress == "title" && page > (ArrOfArticles.numberOfArticles/3-next)) {
-                prev = page-ArrOfArticles.numberOfArticles/3+numberOfLinks-1;
+            if (adress == "title" && page > (articleRepository.numberOfArticles/3-next)) {
+                prev = page-articleRepository.numberOfArticles/3+numberOfLinks-1;
                 next = maxPagesOfTitels-page;
             }
             if (adress == "title") {
@@ -110,11 +110,11 @@ public class HelloWorldController {
     @GetMapping("/title")
     @ResponseBody
     public String getTitle(Integer page) {
-        page=ArrOfArticles.getRealArticleNumber(page, "title");
+        page=articleRepository.getRealArticleNumber(page, "title");
         String titles="<body><br>" + getLinksToArticles(page, "title");
         int i=page*3-2;
-        while (i<=ArrOfArticles.numberOfArticles && i<=page*3) {
-            titles += "<a href=http://localhost:8080/site/view?articleNumber=" + i + ">" + ArrOfArticles.getTitleOfArticle(i) + "</a>" + "<br>";
+        while (i<=articleRepository.numberOfArticles && i<=page*3) {
+            titles += "<a href=http://localhost:8080/site/view?articleNumber=" + i + ">" + articleRepository.getTitleOfArticle(i) + "</a>" + "<br>";
             i++;
         }
             return titles + "<br></body>";
@@ -123,8 +123,8 @@ public class HelloWorldController {
     @GetMapping("/page")
     @ResponseBody
     public String getPage(Integer page) {
-        page=ArrOfArticles.getRealArticleNumber(page, "page");
-        SiteParam article=ArrOfArticles.getArticle(page);
+        page=articleRepository.getRealArticleNumber(page, "page");
+        SiteParam article=articleRepository.getArticle(page);
         String numPage = "<body><br>" + getLinksToArticles(page, "page");
         String viewPage="<a href=http://localhost:8080/site/view?articleNumber=" + page +">" + "view_" + page + "</a>"+" ";
         return numPage + "<br>" +
@@ -136,8 +136,8 @@ public class HelloWorldController {
     @GetMapping("/view")
     @ResponseBody
     public String getView(Integer articleNumber) {
-        articleNumber=ArrOfArticles.getRealArticleNumber(articleNumber, "view");
-        SiteParam article=ArrOfArticles.getArticle(articleNumber);
+        articleNumber=articleRepository.getRealArticleNumber(articleNumber, "view");
+        SiteParam article=articleRepository.getArticle(articleNumber);
         String numPage = "<body><br>" + getLinksToArticles(articleNumber, "view");
         return numPage + "<br>" +
                 "<form method='post'>" +
@@ -154,12 +154,12 @@ public class HelloWorldController {
     @PostMapping("/view")
     @ResponseBody
     public String postViewOrDelArticle(SiteParam param, Integer articleNumber, String delete) {
-        articleNumber=ArrOfArticles.getRealArticleNumber(articleNumber, "page");
+        articleNumber=articleRepository.getRealArticleNumber(articleNumber, "page");
         if (delete!=null) {
-            ArrOfArticles.removeArticle(articleNumber);
+            articleRepository.removeArticle(articleNumber);
             return getView(articleNumber);
         }
-        ArrOfArticles.editArticle(param, articleNumber-1);
+        articleRepository.editArticle(param, articleNumber-1);
         return getView(articleNumber);
     }
 
@@ -181,7 +181,7 @@ public class HelloWorldController {
     @PostMapping("/newArticle")
     @ResponseBody
     public String postNewArticle(SiteParam param) {
-        ArrOfArticles.addArticle(param);
+        articleRepository.addArticle(param);
         return "Done";
     }
 }
